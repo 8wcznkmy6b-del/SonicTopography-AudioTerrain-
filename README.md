@@ -1,37 +1,44 @@
 # 🌊 AudioTerrain (桌面音频地貌) for macOS
 
-[![Platform](https://img.shields.io/badge/platform-macOS-black.svg)](https://apple.com)
-[![Metal](https://img.shields.io/badge/Render-Metal--API-blue.svg)](https://developer.apple.com/metal/)
-[![Swift](https://img.shields.io/badge/Language-Swift--5.0-orange.svg)](https://swift.org)
-
-AudioTerrain 是一款运行在 macOS 菜单栏的高性能、低能耗的 3D 原生音频反应动态壁纸。它基于 Apple Metal 图形 API 构建，能够与您系统播放的任何音乐、视频或环境音实时同步，渲染出高帧率的 3D 波形地貌景观。
+> **基于 Swift + Metal 开发的 macOS 原生 3D 实时动态音频地貌壁纸**。
+> 本项目是对 Windows 端经典开源项目 [Sonic Topography](https://github.com/yin-yizhen/sonic-topography) 的 macOS 原生复刻与深度升级，专为 Apple Silicon 芯片（M1/M2/M3/M4 系列）进行了 GPU 硬件级性能极致优化。
 
 ---
 
-## ✨ 核心特性
+## ✨ 核心特性 (Key Features)
 
-- **🚀 原生 Metal 驱动**：底层完全基于 Apple Metal 3D 图形引擎打造，GPU 零延迟响应，相比传统 Electron 或 Web 动态壁纸降低了 90% 的 CPU 损耗。
-- **📺 视网膜级原生渲染 (HiDPI)**：支持 macOS Retina 原生像素点对点输出，网格线与线条边缘清晰逼真。
-- **🪄 完美的着色器级抗锯齿 (Shader AA)**：内置屏幕空间导数几何抖动消除技术，旋转视角或远景毫无像素颗粒与闪烁。
-- **⚡ 后台多线程分离渲染 (CVDisplayLink)**：渲染回路完全移至后台专用硬件同步线程，即使您点击设置、拖拽窗口或进行繁重布局，壁纸也永远保持满帧（60/120 FPS）丝滑运行，绝对不卡顿。
-- **🔋 零能耗自动休眠模式 (Zero-Footprint)**：在音乐停止或系统静音时，壁纸渲染会自动完全暂停并释放 GPU 算力，恢复播放时毫秒级自动唤醒，极致省电。
-- **🎨 丰富的主题与微调**：内置 10 款艺术色调主题（深夜守护、深海物语、极地极光等），支持调整采集灵敏度、旋转速度、涟漪特效与特效粒子参数。
+- 🎵 **高保真免声卡系统内录**：基于 macOS `ScreenCaptureKit` 系统 API，无需安装 BlackHole 或 Loopback 等任何虚拟声卡，即可完美内录扬声器/耳机的所有音频，并完美支持系统音量键直接控制。
+- ⚡ **多线程分离渲染 (CVDisplayLink)**：渲染回路完全移至后台专用硬件同步线程，即使点开设置、进行系统重度操作，壁纸也永远保持满帧（60/120 FPS）丝滑运行，绝不卡顿。
+- 🪄 **着色器级网格抗锯齿 (Shader AA)**：内置屏幕空间导数几何防闪烁算法（`fwidth`）与 4x MSAA 物理抗锯齿，网格线条边缘锐利平滑，旋转时无闪烁与摩尔纹。
+- 🔋 **零能耗自动休眠模式 (Zero-Footprint)**：智能监听音频状态与系统锁屏。音乐暂停或系统锁屏时，渲染管线自动完全挂起，GPU 负载归零，极致省电。
+- 🎛️ **原生联动控制面板**：使用原生 `NSPopover` 磨砂玻璃气泡窗口，支持 0.2 秒状态栏连击防抖、预设值与滑块双向智能联动微调。
+- 🎨 **白平衡级色温微调**：色温调节与亮度彻底解耦，往左偏冷（赛博森林），往右偏暖（黄金时刻），提供 10 款精心调配的渐变色主题。
+- 🌌 **丰富三维动效**：支持涟漪波纹（Ripple）、流星陨石（Meteor）、尘埃粒子（Particle）以及静默空闲起伏（Idle Wave）等多重动效自由组合。
 
 ---
 
 ## 📦 如何下载与安装
 
-### 下载正式版
+### 1. 下载正式版
 1. 点击本仓库右侧的 **[Releases]** 区域。
-2. 下载最新版本的 `AudioTerrainMetal.app.zip`。
-3. 双击解压，将得到的 `AudioTerrainMetal.app` 拖入您的 **应用程序 (Applications)** 文件夹。
+2. 下载最新版本的 `SonicTopography-macOS.zip`。
+3. 解压后将 `AudioTerrainMetal.app` 拖入您的 **应用程序 (Applications)** 文件夹。
 
-### 首次运行配置与授权
-由于 macOS 系统安全机制，首次打开需要完成以下设置：
-1. **屏幕录制权限**：动态壁纸需要获取当前屏幕的像素布局并绘制到桌面层，首次运行会弹出权限请求，请在 `系统设置 -> 隐私与安全性 -> 屏幕录制` 中为 `AudioTerrainMetal` 勾选授权。
-2. **麦克风/音频输入权限**：用于采集播放的音乐波形。请在首次弹窗中允许访问。若使用全局音乐同步，建议安装虚拟音频线驱动（如 BlackHole）并设置为输入源。
+### 2. 首次运行配置与授权
+1. **屏幕录制权限**：由于系统 API 内录声音的机制，首次运行会弹出权限申请，请在 `系统设置 -> 隐私与安全性 -> 屏幕录制` 中为 `AudioTerrainMetal` 勾选授权并重启应用。
+2. **麦克风权限**：用于备用的麦克风环境声音分析，首次弹窗时请点击允许。
 
 ---
 
-## ⚙️ 常见问题与支持
-如果您在使用中遇到问题，或者有任何功能建议，欢迎在本仓库的 **[Issues]** 页面提交反馈。
+## ⚙️ 技术栈 (Technology Stack)
+
+- **语言**：Swift 6
+- **图形 API**：Metal (Native GPU Pipeline / Instanced Rendering)
+- **音频分析**：AVFoundation + Accelerate (vDSP FFT)
+- **支持系统**：macOS 14.0+ (原生适配 Apple Silicon M 系列芯片)
+
+---
+
+## 📄 免责与许可说明 (License)
+
+本项目仅用于学习、个人研究和壁纸美化。保留所有权利。
